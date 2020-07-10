@@ -5,17 +5,27 @@ const { buildSchema } = require('graphql');
 
 const app = express();
 
+const events = [];
+
 app.use(bodyParser.json());
 
 app.use('/graphql', graphqlHttp({ //configure graphql
     //links to our schema
     schema: buildSchema(`
-        type RootQuery{
-            events: [String!]!
+        type Event{
+            _id: ID
+            title: String!
+            description: String!
+            time: String!
         }
 
+        type RootQuery{
+            events: [Event!]!
+        }
+
+
         type RootMutation{
-            createEvent(name : String): String
+            createEvent(title: String! description: String! time: String!): Event
         }
 
         schema{
@@ -26,11 +36,17 @@ app.use('/graphql', graphqlHttp({ //configure graphql
     //links to our resolvers
     rootValue: { 
         events: () => {
-            return ['Running', 'Swiming', 'Yoga']
+            return events;
         },
         createEvent: (args) => {
-            const eventName = args.name;
-            return eventName;
+            const event = {
+                _id: Math.random().toString(),
+                title: args.title,
+                description: args.description,
+                time: args.time
+            };
+            events.push(event);
+            return event;
         }
     },
     //to enable default UI for graphQL interaction which is shipped with graphql
