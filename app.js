@@ -1,7 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql').graphqlHTTP;
 const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -52,5 +54,19 @@ app.use('/graphql', graphqlHttp({ //configure graphql
     //to enable default UI for graphQL interaction which is shipped with graphql
     graphiql: true
 }));
+
+console.log(process.env.MONGODB_USER);
+
+mongoose.connect(
+    `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@fitnesstrackingdashboar.vookk.mongodb.net/fitnessDB?retryWrites=true&w=majority`, 
+    { useNewUrlParser: true , useUnifiedTopology: true}
+).then(() => {
+        console.log('perfect')
+    }
+)
+.catch( err => {
+    console.log(err);
+    }
+)
 
 app.listen(8080);
