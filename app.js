@@ -7,27 +7,31 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-const events = [];
+const allUserFitnessData = [];
 
 app.use(bodyParser.json());
 
 app.use('/graphql', graphqlHttp({ //configure graphql
     //links to our schema
     schema: buildSchema(`
-        type Event{
+        type avgWaterPerWeek{
+            week: Int!
+            ltr: Int!
+        }
+
+        type UserFitnessData{
             _id: ID
-            title: String!
-            description: String!
-            time: String!
+            userName: String!
+            waterConsumption: [avgWaterPerWeek]
         }
 
         type RootQuery{
-            events: [Event!]!
+            userFitnessData: UserFitnessData
         }
 
 
         type RootMutation{
-            createEvent(title: String! description: String! time: String!): Event
+            createUserFitnessData(userName: String! waterConsumption: [avgWaterPerWeek]): UserFitnessData
         }
 
         schema{
@@ -37,25 +41,22 @@ app.use('/graphql', graphqlHttp({ //configure graphql
     `),
     //links to our resolvers
     rootValue: { 
-        events: () => {
-            return events;
+        userFitnessData: () => {
+            return allUserFitnessData;
         },
-        createEvent: (args) => {
-            const event = {
+        createUserFitnessData: (args) => {
+            const userFitnessData = {
                 _id: Math.random().toString(),
-                title: args.title,
-                description: args.description,
-                time: args.time
+                userName: args.userName,
+                waterConsumption: args.waterConsumption,
             };
-            events.push(event);
-            return event;
+            allUserFitnessData.push(userFitnessData);
+            return userFitnessData;
         }
     },
     //to enable default UI for graphQL interaction which is shipped with graphql
     graphiql: true
 }));
-
-console.log(process.env.MONGODB_USER);
 
 mongoose.connect(
     `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@fitnesstrackingdashboar.vookk.mongodb.net/fitnessDB?retryWrites=true&w=majority`, 
