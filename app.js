@@ -20,7 +20,7 @@ app.use('/graphql', graphqlHttp({ //configure graphql
         }
 
         type UserFitnessData{
-            _id: ID
+            _id: Float!
             userName: String!
             waterConsumption: [avgWaterPerWeek]
         }
@@ -29,9 +29,18 @@ app.use('/graphql', graphqlHttp({ //configure graphql
             userFitnessData: UserFitnessData
         }
 
+        input avgWaterPerWeekInput{
+            week: Int!
+            ltr: Int!
+        }
+
+        input UserFitnessDataInput{
+            userName: String! 
+            waterConsumption: [avgWaterPerWeekInput]
+        }
 
         type RootMutation{
-            createUserFitnessData(userName: String! waterConsumption: [avgWaterPerWeek]): UserFitnessData
+            createUserFitnessData(userFitnessDataInput : UserFitnessDataInput): UserFitnessData
         }
 
         schema{
@@ -46,12 +55,13 @@ app.use('/graphql', graphqlHttp({ //configure graphql
         },
         createUserFitnessData: (args) => {
             const userFitnessData = {
-                _id: Math.random().toString(),
-                userName: args.userName,
-                waterConsumption: args.waterConsumption,
+                _id: Math.random()*99,
+                userName: args.userFitnessDataInput.userName,
+                waterConsumption: args.userFitnessDataInput.waterConsumption,
             };
             allUserFitnessData.push(userFitnessData);
-            return userFitnessData;
+            console.log(allUserFitnessData);
+            return allUserFitnessData;
         }
     },
     //to enable default UI for graphQL interaction which is shipped with graphql
@@ -69,5 +79,4 @@ mongoose.connect(
     console.log(err);
     }
 )
-
 app.listen(8080);
