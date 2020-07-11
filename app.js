@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-const allUserFitnessData = [];
+let allUserFitnessData = [];
 
 app.use(bodyParser.json());
 
@@ -20,13 +20,13 @@ app.use('/graphql', graphqlHttp({ //configure graphql
         }
 
         type UserFitnessData{
-            _id: Float!
+            _id: String!
             userName: String!
-            waterConsumption: [avgWaterPerWeek]
+            waterConsumption: [avgWaterPerWeek]!
         }
 
         type RootQuery{
-            userFitnessData: UserFitnessData
+            userFitnessData: [UserFitnessData]
         }
 
         input avgWaterPerWeekInput{
@@ -55,13 +55,12 @@ app.use('/graphql', graphqlHttp({ //configure graphql
         },
         createUserFitnessData: (args) => {
             const userFitnessData = {
-                _id: Math.random()*99,
+                _id: (Math.random()*99).toString(),
                 userName: args.userFitnessDataInput.userName,
                 waterConsumption: args.userFitnessDataInput.waterConsumption,
             };
             allUserFitnessData.push(userFitnessData);
-            console.log(allUserFitnessData);
-            return allUserFitnessData;
+            return userFitnessData;
         }
     },
     //to enable default UI for graphQL interaction which is shipped with graphql
