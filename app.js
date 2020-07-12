@@ -71,6 +71,7 @@ mongoose.connect(
     `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@fitnesstrackingdashboar.vookk.mongodb.net/fitnessDB?retryWrites=true&w=majority`, 
     { useNewUrlParser: true , useUnifiedTopology: true}
 ).then(() => {
+        app.listen(8080);
         console.log('perfect')
     }
 )
@@ -78,4 +79,3 @@ mongoose.connect(
     console.log(err);
     }
 )
-app.listen(8080);
