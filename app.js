@@ -51,7 +51,15 @@ app.use('/graphql', graphqlHttp({ //configure graphql
     //links to our resolvers
     rootValue: { 
         userFitnessData: () => {
-            return allUserFitnessData;
+            return UserFitnessData.find()
+                .then(data => {
+                    return data.map(userFitnessData => {
+                        return {...userFitnessData._doc, _id : userFitnessData._doc._id.toString()}
+                    })
+                })
+                .catch(err => { 
+                    console.log(err);
+                })
         },
         createUserFitnessData: (args) => {
             const userFitnessData = new UserFitnessData ({
@@ -84,7 +92,7 @@ mongoose.connect(
     { useNewUrlParser: true , useUnifiedTopology: true}
 ).then(() => {
         app.listen(8080);
-        console.log('perfect')
+        console.log('Successfully Connected to MongoDB')
     }
 )
 .catch( err => {
