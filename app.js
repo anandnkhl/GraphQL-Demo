@@ -7,12 +7,12 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-let allUserFitnessData = [];
+const UserFitnessData = require("./Models/userFitnessDataModel")
 
 app.use(bodyParser.json());
 
 app.use('/graphql', graphqlHttp({ //configure graphql
-    //links to our schema
+    //links to our graphQL schema
     schema: buildSchema(`
         type avgWaterPerWeek{
             week: Int!
@@ -20,7 +20,7 @@ app.use('/graphql', graphqlHttp({ //configure graphql
         }
 
         type UserFitnessData{
-            _id: String!
+            _id: ID!
             userName: String!
             waterConsumption: [avgWaterPerWeek]!
         }
@@ -54,13 +54,25 @@ app.use('/graphql', graphqlHttp({ //configure graphql
             return allUserFitnessData;
         },
         createUserFitnessData: (args) => {
-            const userFitnessData = {
-                _id: (Math.random()*99).toString(),
+            const userFitnessData = new UserFitnessData ({
                 userName: args.userFitnessDataInput.userName,
                 waterConsumption: args.userFitnessDataInput.waterConsumption,
-            };
-            allUserFitnessData.push(userFitnessData);
-            return userFitnessData;
+            });
+
+            //save() providede by mongoose lib, to write data to the MongoDB connected
+            return userFitnessData.save()
+                .then(
+                    result =>{
+                        console.log(result);
+                        return {...result._doc}
+                    }
+                )
+                .catch(
+                    err => { 
+                        console.log(err)
+                        throw err;
+                    }
+                );
         }
     },
     //to enable default UI for graphQL interaction which is shipped with graphql
