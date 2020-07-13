@@ -1,1 +1,1 @@
-A GraphQL API, for the backend of Fitness Tracking Dashboard (React)
+This repository contains Backend (NodeJS + GraphQL) for a React based Dashboard. This dashboard displays the fitness track of it's users.
