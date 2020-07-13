@@ -129,7 +129,14 @@ app.use('/graphql', graphqlHttp({ //configure graphql
                     console.log(result);
                     return {...result._doc}
                 }
-            )
+            ).then(r =>{
+                const initUserFitnessData = new UserFitnessData ({
+                    userName: args.userFitnessDataInput.userName,
+                    waterConsumption: args.userFitnessDataInput.waterConsumption,
+                    caloriesBurnt: args.userFitnessDataInput.caloriesBurnt
+                });
+                return initUserFitnessData.save()
+            })
             .catch(
                 err => { 
                     console.log(err)
