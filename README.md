@@ -1,0 +1,1 @@
+A GraphQL API, for the backend of Fitness Tracking Dashboard (React)
