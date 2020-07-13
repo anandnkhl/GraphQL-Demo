@@ -16,20 +16,20 @@ app.use('/graphql', graphqlHttp({ //configure graphql
     //links to our graphQL schema
     schema: buildSchema(`
         type avgWaterPerWeek{
-            week: Int!
-            ltr: Int!
+            week: Int
+            ltr: Int
         }
 
         type caloryBurntPerWeek{
-            week: Int!
-            cals: Int!
+            week: Int
+            cals: Int
         }
 
         type UserFitnessData{
             _id: ID!
             userName: String!
-            waterConsumption: [avgWaterPerWeek]!
-            caloriesBurnt: [caloryBurntPerWeek]!
+            waterConsumption: [avgWaterPerWeek]
+            caloriesBurnt: [caloryBurntPerWeek]
         }
 
         type UserInfo{
@@ -42,13 +42,13 @@ app.use('/graphql', graphqlHttp({ //configure graphql
         }
 
         input avgWaterPerWeekInput{
-            week: Int!
-            ltr: Int!
+            week: Int
+            ltr: Int
         }
 
         input caloryBurntPerWeekInput{
-            week: Int!
-            cals: Int!
+            week: Int
+            cals: Int
         }
 
         input UserFitnessDataInput{
