@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-const UserFitnessData = require("./Models/userFitnessDataModel")
+const UserFitnessData = require("./Models/userFitnessDataModel");
+const UserInfo = require("./Models/userInfoModel");
 
 app.use(bodyParser.json());
 
@@ -19,14 +20,25 @@ app.use('/graphql', graphqlHttp({ //configure graphql
             ltr: Int!
         }
 
+        type caloryBurntPerWeek{
+            week: Int!
+            cals: Int!
+        }
+
         type UserFitnessData{
             _id: ID!
             userName: String!
             waterConsumption: [avgWaterPerWeek]!
+            caloriesBurnt: [caloryBurntPerWeek]!
+        }
+
+        type UserInfo{
+            userName: String!
+            emailID: String!
         }
 
         type RootQuery{
-            userFitnessData: [UserFitnessData]
+            getUserFitnessData(userName : String): [UserFitnessData]
         }
 
         input avgWaterPerWeekInput{
@@ -34,13 +46,25 @@ app.use('/graphql', graphqlHttp({ //configure graphql
             ltr: Int!
         }
 
+        input caloryBurntPerWeekInput{
+            week: Int!
+            cals: Int!
+        }
+
         input UserFitnessDataInput{
             userName: String! 
             waterConsumption: [avgWaterPerWeekInput]
+            caloriesBurnt: [caloryBurntPerWeekInput]
+        }
+
+        input UserInfoInput{
+            userName: String!
+            emailID: String!
         }
 
         type RootMutation{
             createUserFitnessData(userFitnessDataInput : UserFitnessDataInput): UserFitnessData
+            createUserInfo(userInfoInput : UserInfoInput ): UserInfo
         }
 
         schema{
@@ -50,8 +74,8 @@ app.use('/graphql', graphqlHttp({ //configure graphql
     `),
     //links to our resolvers
     rootValue: { 
-        userFitnessData: () => {
-            return UserFitnessData.find()
+        getUserFitnessData: (args) => {
+            return (args.userName == 'all'? UserFitnessData.find() : UserFitnessData.find({"userName": args.userName}))
                 .then(data => {
                     return data.map(userFitnessData => {
                         return {...userFitnessData._doc, _id : userFitnessData._doc._id.toString()}
@@ -65,10 +89,32 @@ app.use('/graphql', graphqlHttp({ //configure graphql
             const userFitnessData = new UserFitnessData ({
                 userName: args.userFitnessDataInput.userName,
                 waterConsumption: args.userFitnessDataInput.waterConsumption,
+                caloriesBurnt: args.userFitnessDataInput.caloriesBurnt
             });
 
             //save() providede by mongoose lib, to write data to the MongoDB connected
             return userFitnessData.save()
+                .then(
+                    result =>{
+                        console.log(result);
+                        return {...result._doc}
+                    }
+                )
+                .catch(
+                    err => { 
+                        console.log(err)
+                        throw err;
+                    }
+                );
+        },
+        createUserInfo: (args) => {
+            const userInfo = new UserInfo ({
+                userName: args.userInfoInput.userName,
+                emailID: args.userInfoInput.emailID,
+            });
+
+            //save() providede by mongoose lib, to write data to the MongoDB connected
+            return userInfo.save()
                 .then(
                     result =>{
                         console.log(result);
