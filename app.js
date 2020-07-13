@@ -108,25 +108,34 @@ app.use('/graphql', graphqlHttp({ //configure graphql
                 );
         },
         createUserInfo: (args) => {
-            const userInfo = new UserInfo ({
-                userName: args.userInfoInput.userName,
-                emailID: args.userInfoInput.emailID,
-            });
-
-            //save() providede by mongoose lib, to write data to the MongoDB connected
-            return userInfo.save()
-                .then(
-                    result =>{
-                        console.log(result);
-                        return {...result._doc}
-                    }
-                )
-                .catch(
-                    err => { 
-                        console.log(err)
-                        throw err;
-                    }
-                );
+            return(
+                UserInfo.findOne({"userName": args.userInfoInput.userName}) ||  
+                UserInfo.findOne({"emailID": args.userInfoInput.emailID})
+            )
+            .then( userExist =>{
+                if(userExist){
+                    throw new Error('user already exists')
+                }
+                else{
+                    const userInfo = new UserInfo ({
+                        userName: args.userInfoInput.userName,
+                        emailID: args.userInfoInput.emailID,
+                    });
+                    return userInfo.save()
+                }
+            })
+            .then(
+                result =>{
+                    console.log(result);
+                    return {...result._doc}
+                }
+            )
+            .catch(
+                err => { 
+                    console.log(err)
+                    throw err;
+                }
+            );
         }
     },
     //to enable default UI for graphQL interaction which is shipped with graphql
