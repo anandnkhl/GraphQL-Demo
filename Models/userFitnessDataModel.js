@@ -12,13 +12,29 @@ const avgWaterPerWeekSchema = new Schema({
     }
 });
 
+const caloryBurntPerWeekSchema = new Schema({
+    week: {
+        type: Number,
+        require: true
+    },
+    cals:{
+        type: Number,
+        required: true
+    }
+});
+
 const userFitnessDataSchema = new Schema({
     userName: {
         type: String,
-        require: true
+        require: true,
+        ref: 'UserInfo' //Relation created to the UserInfo Model
     },
     waterConsumption:{
         type: [avgWaterPerWeekSchema],
+        required: true
+    },
+    caloriesBurnt:{
+        type: [caloryBurntPerWeekSchema],
         required: true
     }
 });
