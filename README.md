@@ -1,1 +1,2 @@
-This repository contains Backend (NodeJS + GraphQL) for a React based Dashboard. This dashboard displays the fitness track of it's users.
+This repository contains GraphQL API Backend (NodeJS + GraphQL + MongoDB).
+It demonstrates the basics of GraphQL, its Types, Schemas, Query, Mutation, Subscription and other basic graphQL terminologies. 
